@@ -1,29 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:tools="http://schemas.android.com/tools"
-              android:id="@+id/list_news_feed_container"
+              android:id="@+id/list_container"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:paddingTop="20dp"
               android:paddingBottom="20dp"
               android:orientation="vertical">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                  xmlns:tools="http://schemas.android.com/tools"
-                  android:id="@+id/view_profile_info_container"
-                  android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:layout_marginLeft="16dp"
-                  android:layout_marginRight="16dp"
-                  android:padding="10dp">
+    <LinearLayout
+          android:id="@+id/store_info_container"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginLeft="16dp"
+          android:layout_marginRight="16dp"
+          android:padding="10dp">
 
         <ImageView
-            android:id="@+id/profile_pic_news_feed"
+            android:id="@+id/logo"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:scaleType="centerInside"
-            android:background="@android:color/darker_gray"
-            android:cropToPadding="true"/>
+            android:scaleType="centerCrop"
+            android:background="@android:color/darker_gray"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -32,48 +31,51 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/profile_name_news_feed"
+                android:id="@+id/store_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="15sp"
                 android:textStyle="bold"
-                tools:text="Profile Name"/>
+                tools:text="Store Name"/>
 
             <TextView
-                android:id="@+id/timestamp_news_feed"
+                android:id="@+id/store_category"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="13sp"
                 android:textColor="@color/timestamp"
-                tools:text="Timestamp"/>
+                tools:text="Category"/>
 
         </LinearLayout>
 
     </LinearLayout>
 
     <TextView
-        android:id="@+id/status_message_news_feed"
+        android:id="@+id/product_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="5dp"
         android:paddingLeft="15dp"
         android:paddingRight="15dp"
         android:paddingTop="12dp"
-        tools:text="Status Message"/>
+        android:textSize="15sp"
+        android:textStyle="bold"
+        tools:text="Product Name"/>
 
     <TextView
-        android:id="@+id/link_text"
+        android:id="@+id/product_description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:linksClickable="true"
-        android:paddingBottom="10dp"
+        android:paddingBottom="5dp"
         android:paddingLeft="15dp"
         android:paddingRight="15dp"
-        android:textColorLink="@color/link_text"
-        tools:text="Link Text"/>
+        android:paddingTop="12dp"
+        tools:text="Product Description"/>
 
+    <!-- Product Image. Can be image, gif, or video.
+    IF gif or video, play automatically. -->
     <ImageView
-        android:id="@+id/image_attachment_news_feed"
+        android:id="@+id/product_image"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/white"
