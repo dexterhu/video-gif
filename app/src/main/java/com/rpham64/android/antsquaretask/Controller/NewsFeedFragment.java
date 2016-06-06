@@ -35,6 +35,8 @@ public class NewsFeedFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
 
+    private NewsFeedAdapter mNewsFeedAdapter;
+
     private List<Post> mPosts = new ArrayList<>();
 
     public static NewsFeedFragment newInstance() {
@@ -49,8 +51,7 @@ public class NewsFeedFragment extends Fragment {
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.fragment_news_feed_recycler_view);
 
-        LinearLayoutManager linearLayoutManager =
-                new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(linearLayoutManager);
 
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
@@ -65,12 +66,25 @@ public class NewsFeedFragment extends Fragment {
 
         requestQueue.add(gsonRequest);
 
-        NewsFeedAdapter newsFeedAdapter = new NewsFeedAdapter(mPosts);
-        mRecyclerView.setAdapter(newsFeedAdapter);
-
-        Log.i(TAG, "Length of mPosts: " + mPosts.size());
-
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        setupAdapter();
+    }
+
+    private void setupAdapter() {
+
+        if (mNewsFeedAdapter == null) {
+            mNewsFeedAdapter = new NewsFeedAdapter(mPosts);
+            mRecyclerView.setAdapter(mNewsFeedAdapter);
+        } else {
+            mNewsFeedAdapter.setPosts(mPosts);
+            mNewsFeedAdapter.notifyDataSetChanged();
+        }
+
     }
 
     private Response.Listener<AntsquareJSON> createSuccessListener() {
@@ -81,7 +95,7 @@ public class NewsFeedFragment extends Fragment {
                 // Like response.tags.getListing_count(); etc. etc.
                 List<Cards> cards = response.getCards();
 
-                Log.i(TAG, "Length: " + cards.size());
+                Log.i(TAG, "Number of cards: " + cards.size());
 
                 for (int i = 0; i < cards.size(); ++i) {
 
@@ -97,6 +111,11 @@ public class NewsFeedFragment extends Fragment {
 
                     mPosts.add(post);
                 }
+
+                Log.i(TAG, "Length of mPosts: " + mPosts.size());
+
+                // Key step: Set up adapter AFTER volley request for UI to display properly
+                setupAdapter();
             }
         };
     }
@@ -126,9 +145,7 @@ public class NewsFeedFragment extends Fragment {
 
             View view = inflater.inflate(R.layout.list_item_news_feed, parent, false);
 
-            NewsFeedHolder newsFeedHolder = new NewsFeedHolder(view);
-
-            return newsFeedHolder;
+            return new NewsFeedHolder(view);
         }
 
         @Override
@@ -142,9 +159,16 @@ public class NewsFeedFragment extends Fragment {
         @Override
         public int getItemCount() {
             if (mPosts != null) {
+                Log.i(TAG, "Not null");
+                Log.i(TAG, "Size: " + mPosts.size());
                 return mPosts.size();
             }
+            Log.i(TAG, "Null...");
             return 0;
+        }
+
+        public void setPosts(List<Post> posts) {
+            mPosts = posts;
         }
     }
 
@@ -175,20 +199,22 @@ public class NewsFeedFragment extends Fragment {
         public void bindPost(Post post) {
             mPost = post;
 
+            Picasso.with(getActivity())
+                    .load(mPost.getLogo())
+                    .into(mLogo);
+
             mStoreName.setText(post.getStoreName());
             mStoreCategory.setText(post.getStoreCategory());
 
             mProductName.setText(post.getProductName());
             mProductDescription.setText(post.getProductDescription());
 
-            // TODO: Add Logo and ProductImage via picasso
-            Picasso.with(getActivity())
-                    .load(mPost.getLogo())
-                    .into(mLogo);
+            if (mPost.getImageUrls().size() != 0) {
+                Picasso.with(getActivity())
+                        .load(mPost.getImageUrls().get(0))
+                        .into(mProductImage);
+            }
 
-            Picasso.with(getActivity())
-                    .load(mPost.getImageUrls().get(0))
-                    .into(mProductImage);
         }
     }
 }
