@@ -17,10 +17,13 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.rpham64.android.antsquaretask.Model.AntsquareJSON;
+import com.rpham64.android.antsquaretask.Model.Cards;
 import com.rpham64.android.antsquaretask.Model.GsonRequest;
 import com.rpham64.android.antsquaretask.Model.Post;
 import com.rpham64.android.antsquaretask.R;
+import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -32,7 +35,7 @@ public class NewsFeedFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
 
-    private List<Post> mPosts;
+    private List<Post> mPosts = new ArrayList<>();
 
     public static NewsFeedFragment newInstance() {
         return new NewsFeedFragment();
@@ -50,9 +53,6 @@ public class NewsFeedFragment extends Fragment {
                 new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(linearLayoutManager);
 
-        NewsFeedAdapter newsFeedAdapter = new NewsFeedAdapter(mPosts);
-        mRecyclerView.setAdapter(newsFeedAdapter);
-
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
         final String url = "http://core1.antsquare.com/v4/communities/search?lat=37.3338831&lon=-121.9086862&page=1&per_page=10";
 
@@ -65,22 +65,43 @@ public class NewsFeedFragment extends Fragment {
 
         requestQueue.add(gsonRequest);
 
+        NewsFeedAdapter newsFeedAdapter = new NewsFeedAdapter(mPosts);
+        mRecyclerView.setAdapter(newsFeedAdapter);
+
+        Log.i(TAG, "Length of mPosts: " + mPosts.size());
+
         return view;
     }
 
-    public Response.Listener<AntsquareJSON> createSuccessListener() {
+    private Response.Listener<AntsquareJSON> createSuccessListener() {
         return new Response.Listener<AntsquareJSON>() {
             @Override
             public void onResponse(AntsquareJSON response) {
                 // Do whatever you want to do with response;
                 // Like response.tags.getListing_count(); etc. etc.
+                List<Cards> cards = response.getCards();
 
+                Log.i(TAG, "Length: " + cards.size());
 
+                for (int i = 0; i < cards.size(); ++i) {
+
+                    Post post = new Post();
+
+                    post.setId(cards.get(i).getId());
+                    post.setStoreName(cards.get(i).getStore_name());
+                    post.setStoreCategory(cards.get(i).getStore_category());
+                    post.setLogo(cards.get(i).getLogo());
+                    post.setProductName(cards.get(i).getName());
+                    post.setProductDescription(cards.get(i).getDescription());
+                    post.setImageUrls(cards.get(i).getImages());
+
+                    mPosts.add(post);
+                }
             }
         };
     }
 
-    public Response.ErrorListener createErrorListener() {
+    private Response.ErrorListener createErrorListener() {
         return new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
@@ -101,9 +122,9 @@ public class NewsFeedFragment extends Fragment {
         @Override
         public NewsFeedHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-            View view = LayoutInflater
-                    .from(getActivity())
-                    .inflate(R.layout.list_item_news_feed, parent, false);
+            LayoutInflater inflater = LayoutInflater.from(getActivity());
+
+            View view = inflater.inflate(R.layout.list_item_news_feed, parent, false);
 
             NewsFeedHolder newsFeedHolder = new NewsFeedHolder(view);
 
@@ -161,6 +182,13 @@ public class NewsFeedFragment extends Fragment {
             mProductDescription.setText(post.getProductDescription());
 
             // TODO: Add Logo and ProductImage via picasso
+            Picasso.with(getActivity())
+                    .load(mPost.getLogo())
+                    .into(mLogo);
+
+            Picasso.with(getActivity())
+                    .load(mPost.getImageUrls().get(0))
+                    .into(mProductImage);
         }
     }
 }

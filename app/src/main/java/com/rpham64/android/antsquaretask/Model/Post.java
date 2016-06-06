@@ -1,5 +1,7 @@
 package com.rpham64.android.antsquaretask.Model;
 
+import java.util.List;
+
 /**
  * A single news feed entry containing store info and their
  * product's info
@@ -8,29 +10,19 @@ package com.rpham64.android.antsquaretask.Model;
  */
 public class Post {
 
-    private String mId;                     // Post ID
+    private Integer mId;                     // Post ID
     private String mStoreName;
     private String mStoreCategory;
     private String mLogo;                   // Logo URL
     private String mProductName;
     private String mProductDescription;
-    private String mImageUrl;               // Image URL
+    private List<String> mImageUrls;               // Image URLs
 
-    public Post(String id, String storeName, String storeCategory, String logo, String productName, String productDescription, String imageUrl) {
-        mId = id;
-        mStoreName = storeName;
-        mStoreCategory = storeCategory;
-        mLogo = logo;
-        mProductName = productName;
-        mProductDescription = productDescription;
-        mImageUrl = imageUrl;
-    }
-
-    public String getId() {
+    public Integer getId() {
         return mId;
     }
 
-    public void setId(String id) {
+    public void setId(Integer id) {
         mId = id;
     }
 
@@ -74,11 +66,11 @@ public class Post {
         mProductName = productName;
     }
 
-    public String getImageUrl() {
-        return mImageUrl;
+    public List<String> getImageUrls() {
+        return mImageUrls;
     }
 
-    public void setImageUrl(String imageUrl) {
-        mImageUrl = imageUrl;
+    public void setImageUrls(List<String> imageUrls) {
+        mImageUrls = imageUrls;
     }
 }
