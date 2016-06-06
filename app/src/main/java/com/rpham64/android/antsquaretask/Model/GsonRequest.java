@@ -13,7 +13,9 @@ import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 /**
- * Created by Rudolf on 6/5/2016.
+ * Taken from Google's Volley page "Implementing a Custom Request"
+ *
+ * URL: https://developer.android.com/training/volley/request-custom.html
  */
 public class GsonRequest<T> extends Request<T> {
     private final Gson gson = new Gson();

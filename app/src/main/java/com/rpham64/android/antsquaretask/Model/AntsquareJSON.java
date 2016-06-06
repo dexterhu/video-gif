@@ -15,7 +15,7 @@ public class AntsquareJSON {
     private Integer pages;
     private Integer page;
     private Integer per_page;
-    private List<Card> cards;
+    private List<Cards> cards;
 
     public boolean isHas_more() {
         return has_more;
@@ -49,16 +49,16 @@ public class AntsquareJSON {
         this.per_page = per_page;
     }
 
-    public List<Card> getCards() {
+    public List<Cards> getCards() {
         return cards;
     }
 
-    public void setCards(List<Card> cards) {
+    public void setCards(List<Cards> cards) {
         this.cards = cards;
     }
 }
 
-class Card {
+class Cards {
 
     private Integer id;
     private String logo;                // Logo url
@@ -66,7 +66,7 @@ class Card {
     private String store_category;
     private String name;
     private String description;
-    private List<Image> images;        // List of image urls
+    private List<String> images;        // List of image urls
 
     public Integer getId() {
         return id;
@@ -116,24 +116,11 @@ class Card {
         this.description = description;
     }
 
-    public List<Image> getImages() {
+    public List<String> getImages() {
         return images;
     }
 
-    public void setImages(List<Image> images) {
+    public void setImages(List<String> images) {
         this.images = images;
-    }
-}
-
-class Image {
-
-    private String url;
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
     }
 }

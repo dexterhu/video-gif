@@ -74,7 +74,7 @@ public class NewsFeedFragment extends Fragment {
             public void onResponse(AntsquareJSON response) {
                 // Do whatever you want to do with response;
                 // Like response.tags.getListing_count(); etc. etc.
-                Log.i(TAG, "Length: ");
+
 
             }
         };
