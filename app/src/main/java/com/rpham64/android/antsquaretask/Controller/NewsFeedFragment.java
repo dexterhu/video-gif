@@ -5,12 +5,19 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.Volley;
+import com.rpham64.android.antsquaretask.Model.AntsquareJSON;
+import com.rpham64.android.antsquaretask.Model.GsonRequest;
 import com.rpham64.android.antsquaretask.Model.Post;
 import com.rpham64.android.antsquaretask.R;
 
@@ -46,7 +53,41 @@ public class NewsFeedFragment extends Fragment {
         NewsFeedAdapter newsFeedAdapter = new NewsFeedAdapter(mPosts);
         mRecyclerView.setAdapter(newsFeedAdapter);
 
+        RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
+        final String url = "http://core1.antsquare.com/v4/communities/search?lat=37.3338831&lon=-121.9086862&page=1&per_page=10";
+
+        final GsonRequest gsonRequest = new GsonRequest(
+                url,
+                AntsquareJSON.class,
+                null,
+                createSuccessListener(),
+                createErrorListener());
+
+        requestQueue.add(gsonRequest);
+
         return view;
+    }
+
+    public Response.Listener<AntsquareJSON> createSuccessListener() {
+        return new Response.Listener<AntsquareJSON>() {
+            @Override
+            public void onResponse(AntsquareJSON response) {
+                // Do whatever you want to do with response;
+                // Like response.tags.getListing_count(); etc. etc.
+                Log.i(TAG, "Length: ");
+
+            }
+        };
+    }
+
+    public Response.ErrorListener createErrorListener() {
+        return new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                // Do whatever you want to do with error.getMessage();
+                Log.i(TAG, "Error: " + error.getMessage());
+            }
+        };
     }
 
     private class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedHolder> {
@@ -79,7 +120,10 @@ public class NewsFeedFragment extends Fragment {
 
         @Override
         public int getItemCount() {
-            return mPosts.size();
+            if (mPosts != null) {
+                return mPosts.size();
+            }
+            return 0;
         }
     }
 

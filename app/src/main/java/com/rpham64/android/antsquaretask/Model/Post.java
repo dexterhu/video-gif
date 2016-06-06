@@ -8,20 +8,21 @@ package com.rpham64.android.antsquaretask.Model;
  */
 public class Post {
 
-    private String mId;
+    private String mId;                     // Post ID
     private String mStoreName;
     private String mStoreCategory;
-    private String mLogo;
+    private String mLogo;                   // Logo URL
     private String mProductName;
     private String mProductDescription;
-    private String mImageUrl;           // TASK
+    private String mImageUrl;               // Image URL
 
-    public Post(String id, String storeName, String storeCategory, String logo, String productName, String imageUrl) {
+    public Post(String id, String storeName, String storeCategory, String logo, String productName, String productDescription, String imageUrl) {
         mId = id;
         mStoreName = storeName;
         mStoreCategory = storeCategory;
         mLogo = logo;
         mProductName = productName;
+        mProductDescription = productDescription;
         mImageUrl = imageUrl;
     }
 
