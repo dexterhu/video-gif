@@ -17,6 +17,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
+import com.koushikdutta.ion.Ion;
 import com.rpham64.android.antsquaretask.Model.AntsquareJSON;
 import com.rpham64.android.antsquaretask.Model.Cards;
 import com.rpham64.android.antsquaretask.Model.GsonRequest;
@@ -26,6 +27,9 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import im.ene.lab.toro.Toro;
+import pl.droidsonroids.gif.GifImageView;
 
 /**
  * Created by Rudolf on 6/3/2016.
@@ -44,11 +48,25 @@ public class NewsFeedFragment extends Fragment {
         return new NewsFeedFragment();
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+
+        Toro.attach(getActivity());
+    }
+
+    @Override
+    public void onDestroy() {
+        Toro.detach(getActivity());
+        super.onDestroy();
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_news_feed, container, false);
+        final View view = inflater.inflate(R.layout.fragment_news_feed, container, false);
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.fragment_news_feed_recycler_view);
 
@@ -73,15 +91,35 @@ public class NewsFeedFragment extends Fragment {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
+
+                // Prints the current view's position to logcat
+
+                Log.i(TAG, "Position: " + linearLayoutManager.findLastVisibleItemPosition());
+
+                /*VideoView videoView = (VideoView) view.findViewById(R.id.product_video);
+
+                if (videoView.isPlaying()) {
+
+                    Log.i(TAG, "Playing!");
+
+                    int currentPosition = linearLayoutManager.findLastVisibleItemPosition();
+
+                    if (currentPosition != linearLayoutManager.findLastVisibleItemPosition()) {
+
+                        videoView.pause();
+
+                    } else {
+
+                        videoView.start();
+
+                    }
+                }*/
+
             }
 
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-
-                // Prints the current view's position to logcat
-//                Log.i(TAG, "Position: " + linearLayoutManager.findLastVisibleItemPosition());
-
             }
         });
 
@@ -92,6 +130,13 @@ public class NewsFeedFragment extends Fragment {
     public void onResume() {
         super.onResume();
         setupAdapter();
+        Toro.register(mRecyclerView);
+    }
+
+    @Override
+    public void onPause() {
+        Toro.unregister(mRecyclerView);
+        super.onPause();
     }
 
     private void setupAdapter() {
@@ -193,7 +238,7 @@ public class NewsFeedFragment extends Fragment {
 
         private TextView mProductName;
         private TextView mProductDescription;
-        private ImageView mProductImage;
+        private GifImageView mProductImage;
         private VideoView mProductVideo;
 
         public NewsFeedHolder(View itemView) {
@@ -205,8 +250,19 @@ public class NewsFeedFragment extends Fragment {
 
             mProductName = (TextView) itemView.findViewById(R.id.product_name);
             mProductDescription = (TextView) itemView.findViewById(R.id.product_description);
-            mProductImage = (ImageView) itemView.findViewById(R.id.product_image);
+            mProductImage = (GifImageView) itemView.findViewById(R.id.product_image);
             mProductVideo = (VideoView) itemView.findViewById(R.id.product_video);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mProductVideo.isPlaying()) {
+                        mProductVideo.pause();
+                    } else {
+                        mProductVideo.start();
+                    }
+                }
+            });
         }
 
         public void bindPost(Post post) {
@@ -232,20 +288,34 @@ public class NewsFeedFragment extends Fragment {
 
                 if (firstImageUrl.endsWith(".mp4")) {
 
-                    Log.i(TAG, "Starting...");
+                    Log.i(TAG, "Video...");
 
                     // Video
+                    mProductImage.setVisibility(View.INVISIBLE);
                     mProductVideo.setVisibility(View.VISIBLE);
+
                     mProductVideo.setVideoPath(firstImageUrl);
                     mProductVideo.start();
 
                 } else {
 
-                    // Image
-                    Picasso.with(getActivity())
-                            .load(firstImageUrl)
-                            .into(mProductImage);
+                    mProductImage.setVisibility(View.VISIBLE);
+                    mProductVideo.setVisibility(View.INVISIBLE);
 
+                    if (firstImageUrl.endsWith(".gif")) {
+
+                        // Gif
+                        Ion.with(mProductImage)
+                                .load(firstImageUrl);
+
+                    } else {
+
+                        // Image
+                        Picasso.with(getActivity())
+                                .load(firstImageUrl)
+                                .into(mProductImage);
+
+                    }
                 }
 
             }
