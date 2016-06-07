@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.VideoView;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -51,7 +52,9 @@ public class NewsFeedFragment extends Fragment {
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.fragment_news_feed_recycler_view);
 
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+        final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(
+                getActivity(), LinearLayoutManager.VERTICAL, false);
+
         mRecyclerView.setLayoutManager(linearLayoutManager);
 
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
@@ -65,6 +68,22 @@ public class NewsFeedFragment extends Fragment {
                 createErrorListener());
 
         requestQueue.add(gsonRequest);
+
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                // Prints the current view's position to logcat
+//                Log.i(TAG, "Position: " + linearLayoutManager.findLastVisibleItemPosition());
+
+            }
+        });
 
         return view;
     }
@@ -95,7 +114,7 @@ public class NewsFeedFragment extends Fragment {
                 // Like response.tags.getListing_count(); etc. etc.
                 List<Cards> cards = response.getCards();
 
-                Log.i(TAG, "Number of cards: " + cards.size());
+//                Log.i(TAG, "Number of cards: " + cards.size());
 
                 for (int i = 0; i < cards.size(); ++i) {
 
@@ -111,8 +130,6 @@ public class NewsFeedFragment extends Fragment {
 
                     mPosts.add(post);
                 }
-
-                Log.i(TAG, "Length of mPosts: " + mPosts.size());
 
                 // Key step: Set up adapter AFTER volley request for UI to display properly
                 setupAdapter();
@@ -158,13 +175,7 @@ public class NewsFeedFragment extends Fragment {
 
         @Override
         public int getItemCount() {
-            if (mPosts != null) {
-                Log.i(TAG, "Not null");
-                Log.i(TAG, "Size: " + mPosts.size());
-                return mPosts.size();
-            }
-            Log.i(TAG, "Null...");
-            return 0;
+            return mPosts != null ? mPosts.size() : 0;
         }
 
         public void setPosts(List<Post> posts) {
@@ -183,6 +194,7 @@ public class NewsFeedFragment extends Fragment {
         private TextView mProductName;
         private TextView mProductDescription;
         private ImageView mProductImage;
+        private VideoView mProductVideo;
 
         public NewsFeedHolder(View itemView) {
             super(itemView);
@@ -194,25 +206,48 @@ public class NewsFeedFragment extends Fragment {
             mProductName = (TextView) itemView.findViewById(R.id.product_name);
             mProductDescription = (TextView) itemView.findViewById(R.id.product_description);
             mProductImage = (ImageView) itemView.findViewById(R.id.product_image);
+            mProductVideo = (VideoView) itemView.findViewById(R.id.product_video);
         }
 
         public void bindPost(Post post) {
             mPost = post;
 
+            // Logo
             Picasso.with(getActivity())
                     .load(mPost.getLogo())
                     .into(mLogo);
 
+            // Store Name & Category
             mStoreName.setText(post.getStoreName());
             mStoreCategory.setText(post.getStoreCategory());
 
+            // Product Name & Category
             mProductName.setText(post.getProductName());
             mProductDescription.setText(post.getProductDescription());
 
+            // Product Image/Gif/Video
             if (mPost.getImageUrls().size() != 0) {
-                Picasso.with(getActivity())
-                        .load(mPost.getImageUrls().get(0))
-                        .into(mProductImage);
+
+                final String firstImageUrl = mPost.getImageUrls().get(0);
+
+                if (firstImageUrl.endsWith(".mp4")) {
+
+                    Log.i(TAG, "Starting...");
+
+                    // Video
+                    mProductVideo.setVisibility(View.VISIBLE);
+                    mProductVideo.setVideoPath(firstImageUrl);
+                    mProductVideo.start();
+
+                } else {
+
+                    // Image
+                    Picasso.with(getActivity())
+                            .load(firstImageUrl)
+                            .into(mProductImage);
+
+                }
+
             }
 
         }
