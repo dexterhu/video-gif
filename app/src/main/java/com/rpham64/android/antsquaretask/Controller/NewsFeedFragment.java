@@ -9,30 +9,24 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.VideoView;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
-import com.koushikdutta.ion.Ion;
 import com.rpham64.android.antsquaretask.Model.AntsquareJSON;
 import com.rpham64.android.antsquaretask.Model.Cards;
 import com.rpham64.android.antsquaretask.Model.GsonRequest;
 import com.rpham64.android.antsquaretask.Model.Post;
 import com.rpham64.android.antsquaretask.R;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import im.ene.lab.toro.Toro;
-import pl.droidsonroids.gif.GifImageView;
 
 /**
- * Created by Rudolf on 6/3/2016.
+ * Main Fragment class
  */
 public class NewsFeedFragment extends Fragment {
 
@@ -93,28 +87,9 @@ public class NewsFeedFragment extends Fragment {
                 super.onScrollStateChanged(recyclerView, newState);
 
                 // Prints the current view's position to logcat
+                int position = linearLayoutManager.findLastVisibleItemPosition();
 
-                Log.i(TAG, "Position: " + linearLayoutManager.findLastVisibleItemPosition());
-
-                /*VideoView videoView = (VideoView) view.findViewById(R.id.product_video);
-
-                if (videoView.isPlaying()) {
-
-                    Log.i(TAG, "Playing!");
-
-                    int currentPosition = linearLayoutManager.findLastVisibleItemPosition();
-
-                    if (currentPosition != linearLayoutManager.findLastVisibleItemPosition()) {
-
-                        videoView.pause();
-
-                    } else {
-
-                        videoView.start();
-
-                    }
-                }*/
-
+                Log.i(TAG, "Position: " + position);
             }
 
             @Override
@@ -129,8 +104,8 @@ public class NewsFeedFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        setupAdapter();
         Toro.register(mRecyclerView);
+        setupAdapter();
     }
 
     @Override
@@ -142,7 +117,7 @@ public class NewsFeedFragment extends Fragment {
     private void setupAdapter() {
 
         if (mNewsFeedAdapter == null) {
-            mNewsFeedAdapter = new NewsFeedAdapter(mPosts);
+            mNewsFeedAdapter = new NewsFeedAdapter(getActivity(), mPosts);
             mRecyclerView.setAdapter(mNewsFeedAdapter);
         } else {
             mNewsFeedAdapter.setPosts(mPosts);
@@ -190,136 +165,5 @@ public class NewsFeedFragment extends Fragment {
                 Log.i(TAG, "Error: " + error.getMessage());
             }
         };
-    }
-
-    private class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedHolder> {
-
-        private List<Post> mPosts;
-
-        public NewsFeedAdapter(List<Post> posts) {
-            mPosts = posts;
-        }
-
-        @Override
-        public NewsFeedHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
-            LayoutInflater inflater = LayoutInflater.from(getActivity());
-
-            View view = inflater.inflate(R.layout.list_item_news_feed, parent, false);
-
-            return new NewsFeedHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(NewsFeedHolder newsFeedHolder, int position) {
-
-            Post post = mPosts.get(position);
-
-            newsFeedHolder.bindPost(post);
-        }
-
-        @Override
-        public int getItemCount() {
-            return mPosts != null ? mPosts.size() : 0;
-        }
-
-        public void setPosts(List<Post> posts) {
-            mPosts = posts;
-        }
-    }
-
-    private class NewsFeedHolder extends RecyclerView.ViewHolder {
-
-        private Post mPost;
-
-        private ImageView mLogo;
-        private TextView mStoreName;
-        private TextView mStoreCategory;
-
-        private TextView mProductName;
-        private TextView mProductDescription;
-        private GifImageView mProductImage;
-        private VideoView mProductVideo;
-
-        public NewsFeedHolder(View itemView) {
-            super(itemView);
-
-            mLogo = (ImageView) itemView.findViewById(R.id.logo);
-            mStoreName = (TextView) itemView.findViewById(R.id.store_name);
-            mStoreCategory = (TextView) itemView.findViewById(R.id.store_category);
-
-            mProductName = (TextView) itemView.findViewById(R.id.product_name);
-            mProductDescription = (TextView) itemView.findViewById(R.id.product_description);
-            mProductImage = (GifImageView) itemView.findViewById(R.id.product_image);
-            mProductVideo = (VideoView) itemView.findViewById(R.id.product_video);
-
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (mProductVideo.isPlaying()) {
-                        mProductVideo.pause();
-                    } else {
-                        mProductVideo.start();
-                    }
-                }
-            });
-        }
-
-        public void bindPost(Post post) {
-            mPost = post;
-
-            // Logo
-            Picasso.with(getActivity())
-                    .load(mPost.getLogo())
-                    .into(mLogo);
-
-            // Store Name & Category
-            mStoreName.setText(post.getStoreName());
-            mStoreCategory.setText(post.getStoreCategory());
-
-            // Product Name & Category
-            mProductName.setText(post.getProductName());
-            mProductDescription.setText(post.getProductDescription());
-
-            // Product Image/Gif/Video
-            if (mPost.getImageUrls().size() != 0) {
-
-                final String firstImageUrl = mPost.getImageUrls().get(0);
-
-                if (firstImageUrl.endsWith(".mp4")) {
-
-                    Log.i(TAG, "Video...");
-
-                    // Video
-                    mProductImage.setVisibility(View.INVISIBLE);
-                    mProductVideo.setVisibility(View.VISIBLE);
-
-                    mProductVideo.setVideoPath(firstImageUrl);
-                    mProductVideo.start();
-
-                } else {
-
-                    mProductImage.setVisibility(View.VISIBLE);
-                    mProductVideo.setVisibility(View.INVISIBLE);
-
-                    if (firstImageUrl.endsWith(".gif")) {
-
-                        // Gif
-                        Ion.with(mProductImage)
-                                .load(firstImageUrl);
-
-                    } else {
-
-                        // Image
-                        Picasso.with(getActivity())
-                                .load(firstImageUrl)
-                                .into(mProductImage);
-
-                    }
-                }
-
-            }
-
-        }
     }
 }
