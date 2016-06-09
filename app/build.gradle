@@ -38,4 +38,5 @@ dependencies {
     compile "com.github.eneim:Toro:${toro_latest_version}"
     compile 'com.koushikdutta.ion:ion:2.1.7'
     compile 'com.twilio:conversations-android:0.12.0'
+    compile 'com.twilio.sdk:twilio-java-sdk:7.0.0-rc-5@jar'
 }

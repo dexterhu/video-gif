@@ -26,6 +26,8 @@ import android.widget.Toast;
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
+import com.rpham64.android.antsquaretask.R;
+import com.rpham64.android.antsquaretask.dialog.Dialog;
 import com.twilio.common.AccessManager;
 import com.twilio.conversations.AudioOutput;
 import com.twilio.conversations.AudioTrack;
@@ -47,8 +49,6 @@ import com.twilio.conversations.VideoRenderer;
 import com.twilio.conversations.VideoScaleType;
 import com.twilio.conversations.VideoTrack;
 import com.twilio.conversations.VideoViewRenderer;
-import com.rpham64.android.antsquaretask.R;
-import com.rpham64.android.antsquaretask.dialog.Dialog;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -60,7 +60,7 @@ public class ConversationActivity extends AppCompatActivity {
     /*
      * You must provide a Twilio AccessToken to connect to the Conversations service
      */
-    private static final String TWILIO_ACCESS_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImN0eSI6InR3aWxpby1mcGE7dj0xIn0.eyJqdGkiOiJTSzViMTc0M2U2YzQ0OTcyYTNlMTQ5YmU2Y2JhYjgzMGIxLTE0NjU0MjI1NjgiLCJpc3MiOiJTSzViMTc0M2U2YzQ0OTcyYTNlMTQ5YmU2Y2JhYjgzMGIxIiwic3ViIjoiQUMwZmM1NTRkM2Y3MTgyMTE2YzZjYTViZjMxOWMyNWUxYiIsImV4cCI6MTQ2NTQyNjE2OCwiZ3JhbnRzIjp7ImlkZW50aXR5IjoicXVpY2tzdGFydCIsInJ0YyI6eyJjb25maWd1cmF0aW9uX3Byb2ZpbGVfc2lkIjoiVlMzNTA0YTYxNmYwY2MwZWM3NjcxNWVkYjc3ZjA1MGMxYyJ9fX0.SHB53V7P2pSQHPeJkYeBi41KscCD3b6FRF8ygJkhprI";
+    private static final String TWILIO_ACCESS_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImN0eSI6InR3aWxpby1mcGE7dj0xIn0.eyJqdGkiOiJTSzViMTc0M2U2YzQ0OTcyYTNlMTQ5YmU2Y2JhYjgzMGIxLTE0NjU0NTYxNTQiLCJpc3MiOiJTSzViMTc0M2U2YzQ0OTcyYTNlMTQ5YmU2Y2JhYjgzMGIxIiwic3ViIjoiQUMwZmM1NTRkM2Y3MTgyMTE2YzZjYTViZjMxOWMyNWUxYiIsImV4cCI6MTQ2NTQ1OTc1NCwiZ3JhbnRzIjp7ImlkZW50aXR5IjoicXVpY2tzdGFydCIsInJ0YyI6eyJjb25maWd1cmF0aW9uX3Byb2ZpbGVfc2lkIjoiVlMyZGZjYjNlY2E4MmIyNWM5ZDdjZTc1MDU2NjA0N2NlOCJ9fX0.8NzZP4b7wdiBUnYE6VNEJ1hgYoQtRsdINeLXZNcA52I";
 
     /*
      * Twilio Conversations Client allows a client to create or participate in a conversation.
@@ -150,6 +150,7 @@ public class ConversationActivity extends AppCompatActivity {
          */
         setCallAction();
 
+        retrieveAccessTokenfromServer();
     }
 
     @Override
@@ -952,7 +953,7 @@ public class ConversationActivity extends AppCompatActivity {
 
     private void retrieveAccessTokenfromServer() {
         Ion.with(this)
-                .load("http://localhost:8000/token.php")
+                .load("https://9cd6cf2f.ngrok.io/twilio/token.php")
                 .asJsonObject()
                 .setCallback(new FutureCallback<JsonObject>() {
                     @Override
@@ -961,6 +962,9 @@ public class ConversationActivity extends AppCompatActivity {
                             // The identity can be used to receive calls
                             String identity = result.get("identity").getAsString();
                             String accessToken = result.get("token").getAsString();
+
+                            Log.i(TAG, "Identity: " + identity);
+                            Log.i(TAG, "Access Token: " + accessToken);
 
                             setTitle(identity);
                             accessManager = AccessManager.create(ConversationActivity.this,
