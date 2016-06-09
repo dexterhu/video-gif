@@ -111,11 +111,12 @@
 
             </RelativeLayout>
 
-            <Button
+            <ImageButton
                 android:id="@+id/video_call_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Video Call"/>
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:text="Video Call"
+                android:src="@drawable/ic_videocam_green_24px"/>
 
         </LinearLayout>
 

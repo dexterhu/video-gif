@@ -1,15 +1,17 @@
 package com.rpham64.android.antsquaretask.UI;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
 import com.rpham64.android.antsquaretask.Model.Post;
 import com.rpham64.android.antsquaretask.R;
+import com.rpham64.android.antsquaretask.activity.ConversationActivity;
 import com.squareup.picasso.Picasso;
 
 import im.ene.lab.toro.ToroVideoViewHolder;
@@ -36,7 +38,7 @@ public class NewsFeedHolder extends ToroVideoViewHolder {
     private GifImageView mProductImage;
     private ToroVideoView mProductVideo;
 
-    private Button mVideoCallButton;
+    private ImageButton mVideoCallButton;
 
     public NewsFeedHolder(Context context, View itemView) {
         super(itemView);
@@ -52,15 +54,15 @@ public class NewsFeedHolder extends ToroVideoViewHolder {
         mProductImage = (GifImageView) itemView.findViewById(R.id.product_image);
         mProductVideo = (ToroVideoView) itemView.findViewById(R.id.product_video);
 
-        mVideoCallButton = (Button) itemView.findViewById(R.id.video_call_button);
+        mVideoCallButton = (ImageButton) itemView.findViewById(R.id.video_call_button);
 
-        mProductVideo.setOnClickListener(new View.OnClickListener() {
+        itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mProductVideo.isPlaying()) {
-                    mProductVideo.pause();
+                if (isPlaying()) {
+                    pause();
                 } else {
-                    mProductVideo.start();
+                    start();
                 }
             }
         });
@@ -68,7 +70,8 @@ public class NewsFeedHolder extends ToroVideoViewHolder {
         mVideoCallButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent intent = new Intent(mContext, ConversationActivity.class);
+                mContext.startActivity(intent);
             }
         });
     }
