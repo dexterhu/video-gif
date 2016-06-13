@@ -3,6 +3,7 @@ package com.rpham64.android.antsquaretask.UI;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -29,6 +30,8 @@ public class NewsFeedHolder extends ToroVideoViewHolder {
 
     private Post mPost;
 
+    private RecyclerView mRecyclerViewImages;
+
     private ImageView mLogo;
     private TextView mStoreName;
     private TextView mStoreCategory;
@@ -44,6 +47,9 @@ public class NewsFeedHolder extends ToroVideoViewHolder {
         super(itemView);
 
         mContext = context;
+
+        mRecyclerViewImages =
+                (RecyclerView) itemView.findViewById(R.id.row_images_slider_recycler_view);
 
         mLogo = (ImageView) itemView.findViewById(R.id.logo);
         mStoreName = (TextView) itemView.findViewById(R.id.store_name);
@@ -70,6 +76,10 @@ public class NewsFeedHolder extends ToroVideoViewHolder {
         mVideoCallButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                // Pause video, if playing
+                pause();
+
                 Intent intent = new Intent(mContext, ConversationActivity.class);
                 mContext.startActivity(intent);
             }
@@ -92,6 +102,31 @@ public class NewsFeedHolder extends ToroVideoViewHolder {
         // Product Name & Category
         mProductName.setText(mPost.getProductName());
         mProductDescription.setText(mPost.getProductDescription());
+
+/*        // Images Slider
+
+        LinearLayoutManager imageSlider =
+                new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false);
+
+        mRecyclerViewImages.setLayoutManager(imageSlider);
+        mRecyclerViewImages.setHasFixedSize(true);
+
+        RecyclerView.Adapter imageSliderAdapter = new RecyclerView.Adapter() {
+            @Override
+            public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                return null;
+            }
+
+            @Override
+            public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+                
+            }
+
+            @Override
+            public int getItemCount() {
+                return mPost.getImageUrls() == null ? mPost.getImageUrls().size() : 0;
+            }
+        };*/
 
         // Product Image/Gif/Video
         if (mPost.getImageUrls().size() != 0) {

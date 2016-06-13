@@ -60,7 +60,16 @@ public class ConversationActivity extends AppCompatActivity {
     /*
      * You must provide a Twilio AccessToken to connect to the Conversations service
      */
-    private static final String TWILIO_ACCESS_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImN0eSI6InR3aWxpby1mcGE7dj0xIn0.eyJqdGkiOiJTSzViMTc0M2U2YzQ0OTcyYTNlMTQ5YmU2Y2JhYjgzMGIxLTE0NjU0NTYxNTQiLCJpc3MiOiJTSzViMTc0M2U2YzQ0OTcyYTNlMTQ5YmU2Y2JhYjgzMGIxIiwic3ViIjoiQUMwZmM1NTRkM2Y3MTgyMTE2YzZjYTViZjMxOWMyNWUxYiIsImV4cCI6MTQ2NTQ1OTc1NCwiZ3JhbnRzIjp7ImlkZW50aXR5IjoicXVpY2tzdGFydCIsInJ0YyI6eyJjb25maWd1cmF0aW9uX3Byb2ZpbGVfc2lkIjoiVlMyZGZjYjNlY2E4MmIyNWM5ZDdjZTc1MDU2NjA0N2NlOCJ9fX0.8NzZP4b7wdiBUnYE6VNEJ1hgYoQtRsdINeLXZNcA52I";
+    private static final String TWILIO_ACCESS_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImN0eSI6InR3aWxpby1mcGE7dj0xIn0.eyJqdGkiOiJTSzViMTc0M2U2YzQ0OTcyYTNlMTQ5YmU2Y2JhYjgzMGIxLTE0NjU1MTQ3OTUiLCJpc3MiOiJTSzViMTc0M2U2YzQ0OTcyYTNlMTQ5YmU2Y2JhYjgzMGIxIiwic3ViIjoiQUMwZmM1NTRkM2Y3MTgyMTE2YzZjYTViZjMxOWMyNWUxYiIsImV4cCI6MTQ2NTUxODM5NSwiZ3JhbnRzIjp7ImlkZW50aXR5IjoiVGVzdDMiLCJydGMiOnsiY29uZmlndXJhdGlvbl9wcm9maWxlX3NpZCI6IlZTNThhN2E3NDdlMmE1MjZiNzY2N2VmNjBlYjQzMWQ0M2YifX19.Wd4uKhvMhACJY8vXTYWm_rrvMzGNfkIEnwMN8AYb13g";
+
+    /**
+     * Local Server Url. Concatenate with "/twilio/tokens.php" to access device identity and token.
+     *
+     * Be sure to set value after opening XAMPP and ngrok.
+     *
+     * Format: "https://#######.ngrok.io"
+     */
+    private final String local_server_url = "https://4b075c20.ngrok.io";
 
     /*
      * Twilio Conversations Client allows a client to create or participate in a conversation.
@@ -953,7 +962,7 @@ public class ConversationActivity extends AppCompatActivity {
 
     private void retrieveAccessTokenfromServer() {
         Ion.with(this)
-                .load("https://9cd6cf2f.ngrok.io/twilio/token.php")
+                .load(local_server_url + "/twilio/token.php")
                 .asJsonObject()
                 .setCallback(new FutureCallback<JsonObject>() {
                     @Override
