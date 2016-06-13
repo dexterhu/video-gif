@@ -115,15 +115,8 @@ public class NewsFeedFragment extends Fragment {
     }
 
     private void setupAdapter() {
-
-        if (mNewsFeedAdapter == null) {
-            mNewsFeedAdapter = new NewsFeedAdapter(getActivity(), mPosts);
-            mRecyclerView.setAdapter(mNewsFeedAdapter);
-        } else {
-            mNewsFeedAdapter.setPosts(mPosts);
-            mNewsFeedAdapter.notifyDataSetChanged();
-        }
-
+        mNewsFeedAdapter = new NewsFeedAdapter(getActivity(), mPosts);
+        mRecyclerView.setAdapter(mNewsFeedAdapter);
     }
 
     private Response.Listener<AntsquareJSON> createSuccessListener() {

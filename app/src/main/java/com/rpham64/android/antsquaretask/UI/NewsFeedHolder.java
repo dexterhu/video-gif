@@ -103,7 +103,7 @@ public class NewsFeedHolder extends ToroVideoViewHolder {
         mProductName.setText(mPost.getProductName());
         mProductDescription.setText(mPost.getProductDescription());
 
-/*        // Images Slider
+/*        // TODO: Image slider
 
         LinearLayoutManager imageSlider =
                 new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false);
@@ -119,7 +119,7 @@ public class NewsFeedHolder extends ToroVideoViewHolder {
 
             @Override
             public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-                
+
             }
 
             @Override
